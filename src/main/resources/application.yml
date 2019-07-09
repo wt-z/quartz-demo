@@ -1,0 +1,40 @@
+server:
+    port: 10100
+spring:
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        password: root
+        platform: org.hibernate.dialect.MySQL5Dialect
+        url: jdbc:mysql://localhost:13306/quartz_demo_db?useSSL=false
+        username: root
+    jpa:
+        hibernate:
+            ddl-auto: update
+        open-in-view: false
+        show-sql: true
+    quartz:
+#        jdbc:
+#            initialize-schema: never
+#        job-store-type: jdbc
+        properties:
+            org:
+                quartz:
+                    jobStore:
+                        class: org.quartz.simpl.RAMJobStore
+#                        class: org.quartz.impl.jdbcjobstore.JobStoreTX
+#                        driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+#                        isClustered: true
+#                        misfireThreshold: 60000
+#                        tablePrefix: qrtz_
+#                        useProperties: true
+#                    plugin:
+#                        shutdownHook:
+#                            class: org.quartz.plugins.management.ShutdownHookPlugin
+#                            cleanShutdown: true
+#                    scheduler:
+#                        instanceId: NON_CLUSTERED
+#                        instanceIdGenerator:
+#                            class: com.helixz.quartz.demo.component.CustomQuartzInstanceIdGenerator
+#                        instanceName: quartz-demo-app
+                    threadPool:
+                        threadCount: 20

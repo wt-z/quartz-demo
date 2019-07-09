@@ -17,8 +17,8 @@ import java.util.Properties;
 @Configuration
 public class SchedulerConfig {
 
-    @Autowired
-    private DataSource dataSource;
+    //@Autowired
+    //private DataSource dataSource;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -40,7 +40,7 @@ public class SchedulerConfig {
 
         SchedulerFactoryBean factory = new SchedulerFactoryBean();
         factory.setOverwriteExistingJobs(true);
-        factory.setDataSource(dataSource);
+        //factory.setDataSource(dataSource);
         factory.setQuartzProperties(properties);
         factory.setJobFactory(jobFactory);
         return factory;

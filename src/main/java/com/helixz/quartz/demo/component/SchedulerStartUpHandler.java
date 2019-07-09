@@ -21,7 +21,7 @@ public class SchedulerStartUpHandler implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         log.info("Schedule all new scheduler jobs at app startup - starting");
         try {
-            schedulerService.startAllSchedulers();
+            //schedulerService.startAllSchedulers();
             log.info("Schedule all new scheduler jobs at app startup - complete");
         } catch (Exception ex) {
             log.error("Schedule all new scheduler jobs at app startup - error", ex);

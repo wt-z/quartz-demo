@@ -6,6 +6,7 @@ import com.helixz.quartz.demo.repository.SchedulerRepository;
 import com.helixz.quartz.demo.service.SchedulerService;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.quartz.QuartzJobBean;
@@ -13,8 +14,7 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Chamith
@@ -172,6 +172,45 @@ public class SchedulerServiceImpl implements SchedulerService {
         } catch (SchedulerException e) {
             log.error("Failed to start new job - {}", jobInfo.getJobName(), e);
             return false;
+        }
+    }
+
+    /**
+     * 获取所有任务
+     * */
+    private static void getAllJobs(Scheduler scheduler) throws SchedulerException {
+        List<String> jobGroups = scheduler.getJobGroupNames();
+
+        for (String group : jobGroups) {
+            GroupMatcher<JobKey> groupMatcher = GroupMatcher.groupContains(group);
+
+            Set<JobKey> jobKeys = scheduler.getJobKeys(groupMatcher);
+
+            for (JobKey jobKey : jobKeys) {
+                JobDetail detail = scheduler.getJobDetail(jobKey);
+
+                List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
+
+                Map<String, String> map = new HashMap<>();
+                for (Trigger trigger : triggers) {
+                    map.put("group", group);
+                    map.put("job key name", jobKey.getName());
+                    map.put("Description", detail.getDescription());
+                    map.put("trigger.Key.Name", trigger.getKey().getName());
+                    map.put("trigger.Key.Group", trigger.getKey().getGroup());
+                    // 没有找到对应的值 map.put("trigger.GetType().Name",);
+                    // https://stackoverflow.com/questions/12489450/get-all-jobs-in-quartz-net-2-0
+                    map.put("TriggerState", scheduler.getTriggerState(trigger.getKey()).name());
+                    Date nextFireTime = trigger.getNextFireTime();
+                    if (nextFireTime != null) {
+                        map.put("nextFireTime", nextFireTime.toString());
+                    }
+                    Date previousFireTime = trigger.getPreviousFireTime();
+                    if (previousFireTime != null) {
+                        map.put("previousFireTime", previousFireTime.toString());
+                    }
+                }
+            }
         }
     }
 }
